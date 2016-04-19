@@ -2,6 +2,8 @@ package com.cisco.cmad.webapp;
 
 import java.util.List;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -17,35 +19,28 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
+import com.cisco.cmad.dao.UserDao;
 import com.cisco.cmad.webapp.Users;
 
 @Path("/user")
 public class UserService {
 
+	UserDao dao = new UserDao();
+	
+	public void setUserDao(UserDao dao){
+		this.dao = dao;
+	}
 	@GET
 	@Path("/{param}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Users getUser(@PathParam("param") Integer id) {
-		Session ses = HibernateUtil.currentSession();
-		try {
-			Criteria crit =  ses.createCriteria(Users.class);
-			crit.add(Restrictions.idEq(id));
-			Users u = (Users)crit.uniqueResult();
-			return u;
-		} finally {
-			HibernateUtil.closeSession();
-		}
+		return dao.getUser(id);
 	}
 	
 	@GET
 	@Produces({MediaType.APPLICATION_JSON})
 	public List<Users> getUsers() {
-		Session ses = HibernateUtil.currentSession();
-		try {
-			return ses.createCriteria(Users.class).list();
-		} finally {
-			HibernateUtil.closeSession();
-		}
+		return dao.getUsers();
 	}
 	
 	
